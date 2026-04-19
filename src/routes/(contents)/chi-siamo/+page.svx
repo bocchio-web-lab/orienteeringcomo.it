@@ -1,0 +1,41 @@
+<script lang="ts">
+    import CardMember from "$lib/components/cards/card-member.svelte";
+    import { members } from "$lib/data/members";
+</script>
+
+<svelte:head>
+    <title>Chi siamo</title>
+</svelte:head>
+
+# Chi siamo
+
+Siamo una società sportiva che promuove l'orienteering sul territorio Comasco dal 1992.
+La nostra missione è diffondere la passione per questo sport, offrendo opportunità di allenamento, competizione e crescita personale a tutti i livelli.
+
+## Società
+
+La nostra storia nasce dalla passione per boschi, mappe e bussola di un ristrettissimo gruppo di amici, che hanno fondato la società con l'obiettivo di condividere questa passione con altri.
+Nel tempo siamo cresciuti, ma la nostra filosofia è rimasta la stessa: creare un ambiente accogliente e stimolante per chiunque voglia avvicinarsi all'orienteering, dai principianti agli atleti più esperti.
+Attualmente contiamo circa 50 tra tesserati e simpatizzanti, che partecipano attivamente a gare, allenamenti e iniziative sociali.
+Siamo orgogliosi di essere una realtà inclusiva, dove ognuno può trovare il proprio spazio e contribuire alla crescita della nostra comunità.
+
+![Foto di gruppo dei tesserati durante un evento sociale]()
+
+## Tesserati
+
+Di seguito una breve presentazione di alcuni dei nostri tesserati, che rappresentano la varietà e la passione che caratterizzano la nostra società.
+Ognuno di loro porta con sé un bagaglio di esperienze e competenze che arricchiscono il nostro gruppo e ci spingono a migliorare continuamente.
+
+<div class="not-prose mt-6 grid gap-4">
+    {#each members as member, i}
+        <CardMember
+            member={{
+                name: member.name,
+                role: member.role,
+                bio: member.bio,
+                image: member.image,
+            }}
+            reverse={i % 2 === 1}
+        />
+    {/each}
+</div>
