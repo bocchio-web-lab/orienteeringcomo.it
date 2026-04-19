@@ -47,7 +47,7 @@
                 { label: "Formazione", anchor: "formazione" },
                 {
                     label: "Attività nelle scuole",
-                    anchor: "attivita-nelle-scuole",
+                    anchor: "attività-nelle-scuole",
                 },
                 { label: "Camp estivi", anchor: "camp-estivi" },
                 { label: "Cartografia", anchor: "cartografia" },
@@ -87,7 +87,7 @@
                 href="/contatti"
                 class={navigationMenuTriggerStyle()}
             >
-                Contatti
+                Contattaci
             </NavigationMenu.Link>
         </NavigationMenu.Item>
     </NavigationMenu.List>
