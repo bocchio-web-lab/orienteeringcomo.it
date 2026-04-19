@@ -20,7 +20,7 @@
                     <p>
                         <a
                             href={`mailto:${footerData.contactEmail}`}
-                            class="hover:text-foreground transition-colors"
+                            class="text-primary underline"
                         >
                             {footerData.contactEmail}
                         </a>
@@ -28,7 +28,7 @@
                     <p>
                         <a
                             href={`tel:${footerData.contactPhone.replace(/\s/g, "")}`}
-                            class="hover:text-foreground transition-colors"
+                            class="text-primary underline"
                         >
                             {footerData.contactPhone}
                         </a>
@@ -38,6 +38,7 @@
                             href="https://maps.app.goo.gl/MRPQuu67AEVXqtTx9"
                             target="_blank"
                             rel="noopener noreferrer"
+                            class="text-primary underline"
                         >
                             {footerData.address}
                         </a>

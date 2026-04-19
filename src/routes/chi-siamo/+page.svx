@@ -4,7 +4,8 @@
 </script>
 
 <svelte:head>
-    <title>Chi siamo</title>
+  <title>Chi siamo</title>
+  <meta name="description" content="Scopri chi siamo, la nostra storia e i nostri tesserati. Siamo una società sportiva che promuove l'orienteering sul territorio comasco dal 1992, con una missione di diffusione della passione per questo sport." />
 </svelte:head>
 
 # Chi siamo

@@ -28,20 +28,16 @@
             ],
         },
         {
-            label: "Gare ed eventi",
-            href: "/gare-ed-eventi",
+            label: "Gare",
+            href: "/gare",
             links: [
-                { label: "Gare future", anchor: "gare-future" },
-                { label: "Eventi futuri", anchor: "eventi-futuri" },
-                {
-                    label: "Gare ed eventi passati",
-                    anchor: "gare-ed-eventi-passati",
-                },
+                { label: "Gare future", anchor: "in-arrivo" },
+                { label: "Gare passate", anchor: "passate" },
             ],
         },
         {
-            label: "Servizi",
-            href: "/servizi",
+            label: "Attività",
+            href: "/attivita",
             links: [
                 { label: "Team Building", anchor: "team-building" },
                 { label: "Formazione", anchor: "formazione" },
@@ -53,42 +49,62 @@
                 { label: "Cartografia", anchor: "cartografia" },
             ],
         },
+        {
+            label: "Contattaci",
+            href: "/contattaci",
+            links: [],
+        },
     ];
 </script>
 
 <NavigationMenu.Root viewport={isMobile}>
     <NavigationMenu.List class="flex-wrap">
         {#each menuSections as section (section.href)}
-            <NavigationMenu.Item>
-                <NavigationMenu.Trigger class="cursor-pointer">
-                    <NavigationMenu.Link href={section.href}>
+            <!-- Mobile Menu Item -->
+            <NavigationMenu.Item class="md:hidden">
+                <NavigationMenu.Link
+                    href={section.href}
+                    class={navigationMenuTriggerStyle()}
+                >
+                    {section.label}
+                </NavigationMenu.Link>
+                <span class="sr-only">Vai alla pagina {section.label}</span>
+            </NavigationMenu.Item>
+
+            <!-- Desktop Menu Item -->
+            <NavigationMenu.Item class="hidden md:block">
+                {#if section.links.length === 0}
+                    <NavigationMenu.Link
+                        href={section.href}
+                        class={navigationMenuTriggerStyle()}
+                    >
                         {section.label}
                     </NavigationMenu.Link>
-                    <span class="sr-only">Apri sottomenu {section.label}</span>
-                </NavigationMenu.Trigger>
-                <NavigationMenu.Content>
-                    <ul class="grid w-50 gap-4 p-2">
-                        {#each section.links as link (link.anchor)}
-                            <li>
-                                <NavigationMenu.Link
-                                    href={`${section.href}#${link.anchor}`}
-                                >
-                                    {link.label}
-                                </NavigationMenu.Link>
-                            </li>
-                        {/each}
-                    </ul>
-                </NavigationMenu.Content>
+                    <span class="sr-only">Vai alla pagina {section.label}</span>
+                {:else}
+                    <NavigationMenu.Trigger class="cursor-pointer">
+                        <NavigationMenu.Link href={section.href} class="py-1.5">
+                            {section.label}
+                        </NavigationMenu.Link>
+                        <span class="sr-only"
+                            >Apri sottomenu {section.label}</span
+                        >
+                    </NavigationMenu.Trigger>
+                    <NavigationMenu.Content>
+                        <ul class="grid w-40 gap-4 p-2">
+                            {#each section.links as link (link.anchor)}
+                                <li>
+                                    <NavigationMenu.Link
+                                        href={`${section.href}#${link.anchor}`}
+                                    >
+                                        {link.label}
+                                    </NavigationMenu.Link>
+                                </li>
+                            {/each}
+                        </ul>
+                    </NavigationMenu.Content>
+                {/if}
             </NavigationMenu.Item>
         {/each}
-
-        <NavigationMenu.Item>
-            <NavigationMenu.Link
-                href="/contatti"
-                class={navigationMenuTriggerStyle()}
-            >
-                Contattaci
-            </NavigationMenu.Link>
-        </NavigationMenu.Item>
     </NavigationMenu.List>
 </NavigationMenu.Root>

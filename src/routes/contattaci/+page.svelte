@@ -80,10 +80,14 @@
 </script>
 
 <svelte:head>
-    <title>Contatti</title>
+    <title>Contattaci</title>
+    <meta
+        name="description"
+        content="Hai domande, idee o semplicemente vuoi fare due chiacchiere sull'orienteering? Contattaci tramite il modulo o via email. Siamo sempre felici di rispondere!"
+    />
 </svelte:head>
 
-<h1>Contatti</h1>
+<h1>Contattaci</h1>
 
 <p>Ogni richiesta è diversa, raccontaci cosa hai in mente :)</p>
 <p>
@@ -206,7 +210,7 @@
                 type="submit"
                 size="lg"
                 disabled={isSubmitting}
-                class="w-full cursor-pointer"
+                class="w-full cursor-pointer bg-black"
             >
                 {isSubmitting ? "Invio in corso..." : "Invia richiesta"}
             </Button>

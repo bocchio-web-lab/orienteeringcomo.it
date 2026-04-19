@@ -22,23 +22,37 @@
     }
 </script>
 
-<Card.Root class="h-full p-6 transition-transform hover:scale-[1.2]">
+<Card.Root
+    class="relative h-full overflow-visible p-5 transition-transform duration-300 ease-out hover:z-10 hover:scale-[1.02] sm:p-6"
+>
     <div
-        class={`flex flex-col-reverse items-center gap-5 md:items-start ${reverse ? "md:flex-row-reverse" : "md:flex-row"}`}
+        class={`flex flex-col-reverse items-center gap-5 md:items-start md:gap-10 ${reverse ? "md:flex-row-reverse" : "md:flex-row"}`}
     >
         <img
             src={member.image ?? getDeterministicFallback(member.name)}
             alt={`Foto profilo di ${member.name}`}
-            class={`h-28 w-28 rounded-full object-cover sm:h-32 sm:w-32 md:h-40 md:w-40 ${reverse ? "" : "scale-x-[-1]"}`}
+            class={`h-28 w-28 shrink-0 rounded-full object-cover sm:h-32 sm:w-32 md:h-40 md:w-40 ${reverse ? "" : "scale-x-[-1]"}`}
             loading="lazy"
         />
 
         <div class="w-full text-center md:text-left">
-            <Card.Header>
-                <Card.Title>{member.name}</Card.Title>
-                <Card.Description>{member.role}</Card.Description>
+            <Card.Header class="space-y-3 mb-5 px-0">
+                <Card.Title
+                    class="text-xl flex gap-2.5 mb-0 justify-center md:justify-between"
+                >
+                    {member.name}
+                </Card.Title>
+
+                <Card.Description
+                    class="text-muted-foreground text-xs mb-0 sm:text-sm"
+                >
+                    {member.role}
+                </Card.Description>
             </Card.Header>
-            <Card.Content>{member.bio}</Card.Content>
+
+            <Card.Content class="px-0">
+                <p class="leading-relaxed">{member.bio}</p>
+            </Card.Content>
         </div>
     </div>
 </Card.Root>

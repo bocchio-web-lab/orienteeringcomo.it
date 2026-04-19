@@ -1,0 +1,43 @@
+<script lang="ts">
+    import CardEvent from "$lib/components/cards/card-event.svelte";
+    import { getEventGroups } from "$lib/data/events";
+
+    const { futureEvents, pastEvents } =
+        getEventGroups();
+</script>
+
+<svelte:head>
+  <title>Gare</title>
+  <meta name="description" content="Scopri tutte le gare di orienteering che abbiamo organizzato o che abbiamo in programma di organizzare. Unisciti a noi per vivere l'emozione della competizione e condividere la passione per questo sport!" />
+</svelte:head>
+
+# Gare
+
+Qui di seguito potete trovare **tutte le gare (di natura competitiva, promozionale o sociale) che abbiamo organizzato o che abbiamo in programma di organizzare**.
+Da notare che questo elenco non include le attività fatte su richiesta, quali team building, formazione, attività nelle scuole o camp estivi.
+
+## In arrivo
+
+{#if futureEvents.length > 0}
+    <div class="not-prose mt-6 grid gap-4">
+        {#each futureEvents as event}
+            <CardEvent {event} />
+        {/each}
+    </div>
+{:else}
+    <p>
+        Non ci sono gare in programma al momento. Rimanete sintonizzati per aggiornamenti futuri!
+    </p>
+{/if}
+
+## Passate
+
+{#if pastEvents.length > 0}
+    <div class="not-prose mt-6 grid gap-4">
+        {#each pastEvents as event}
+            <CardEvent {event} />
+        {/each}
+    </div>
+{:else}
+    <p>Non ci sono gare passate al momento.</p>
+{/if}
