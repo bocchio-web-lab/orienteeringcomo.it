@@ -1,11 +1,12 @@
+<script lang="ts">
+    let { className = "" }: { className?: string } = $props();
+</script>
+
 <svg
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-    version="1.1"
     width="88.100788"
     height="88.100788"
     viewBox="0 0 88.100788 88.100788"
+    class={className}
 >
     <g id="OriComo Logo (Green areas)">
         <path
