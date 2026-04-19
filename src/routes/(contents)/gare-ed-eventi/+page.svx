@@ -1,0 +1,54 @@
+<script lang="ts">
+    import CardEvent from "$lib/components/cards/card-event.svelte";
+    import { getEventGroups } from "$lib/data/events";
+
+    const { futureCompetitions, futurePromotionalSocial, pastEvents } =
+        getEventGroups();
+</script>
+
+# Gare ed Eventi
+
+Qui di seguito potete trovare **tutte le gare o eventi di carattere promozionale o sociale che abbiamo organizzato o che abbiamo in programma di organizzare**.
+Da notare che questo elenco non include le attività fatte su richiesta, quali team building, formazione, attività nelle scuole o camp estivi.
+
+## Gare future
+
+{#if futureCompetitions.length > 0}
+    <div class="not-prose mt-6 grid gap-4">
+        {#each futureCompetitions as event}
+            <CardEvent {event} />
+        {/each}
+    </div>
+{:else}
+    <p>
+        Non ci sono gare competitive in programma al momento. Rimanete
+        sintonizzati per aggiornamenti futuri!
+    </p>
+{/if}
+
+## Eventi futuri
+
+{#if futurePromotionalSocial.length > 0}
+    <div class="not-prose mt-6 grid gap-4">
+        {#each futurePromotionalSocial as event}
+            <CardEvent {event} />
+        {/each}
+    </div>
+{:else}
+    <p>
+        Non ci sono eventi promozionali o sociali in programma al momento.
+        Rimanete sintonizzati per aggiornamenti futuri!
+    </p>
+{/if}
+
+## Gare ed Eventi passati
+
+{#if pastEvents.length > 0}
+    <div class="not-prose mt-6 grid gap-4">
+        {#each pastEvents as event}
+            <CardEvent {event} />
+        {/each}
+    </div>
+{:else}
+    <p>Non ci sono gare o eventi passati al momento.</p>
+{/if}
