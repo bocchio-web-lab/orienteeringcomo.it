@@ -23,25 +23,39 @@
 
     const selectedSubject = $derived(selectedOption.subject);
 
-    async function handleSubmit(event: SubmitEvent) {
+    const encodeFormData = (formData: FormData): string => {
+        const params = new URLSearchParams();
+
+        for (const [key, value] of formData.entries()) {
+            if (typeof value === "string" && key !== "requestType") {
+                params.append(key, value);
+            }
+        }
+
+        return params.toString();
+    };
+
+    const handleSubmit = async (event: SubmitEvent) => {
         event.preventDefault();
 
-        const formElement = event.currentTarget as HTMLFormElement;
+        const formElement = event.currentTarget;
+        if (!(formElement instanceof HTMLFormElement)) {
+            return;
+        }
+
         const formData = new FormData(formElement);
 
         isSubmitting = true;
-        submitError = "";
         submitMessage = "";
+        submitError = "";
 
         try {
-            const response = await fetch("/", {
+            const response = await fetch("/contatti", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
-                body: new URLSearchParams(
-                    formData as unknown as Record<string, string>,
-                ).toString(),
+                body: encodeFormData(formData),
             });
 
             if (!response.ok) {
@@ -62,7 +76,7 @@
         } finally {
             isSubmitting = false;
         }
-    }
+    };
 </script>
 
 <svelte:head>
@@ -102,15 +116,15 @@
         class="space-y-4"
         name="contact"
         method="POST"
-        action="/"
         data-netlify="true"
+        netlify-honeypot="bot-field"
         onsubmit={handleSubmit}
     >
         <input type="hidden" name="form-name" value="contact" />
 
         <input
             type="text"
-            name="website"
+            name="bot-field"
             tabindex="-1"
             autocomplete="off"
             class="hidden"
@@ -158,7 +172,19 @@
                     <option value={option.value}>{option.label}</option>
                 {/each}
             </select>
-            <input type="hidden" name="subject" value={selectedSubject} />
+        </div>
+
+        <div class="hidden" aria-hidden="true">
+            <Label for="subject" class="hidden" aria-hidden="true">
+                Oggetto
+            </Label>
+            <input
+                id="subject"
+                class="hidden"
+                aria-hidden="true"
+                name="subject"
+                value={selectedSubject}
+            />
         </div>
 
         <div class="space-y-2">
