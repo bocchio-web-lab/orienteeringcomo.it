@@ -1,3 +1,5 @@
+*.sql
+.cloudinary
 node_modules
 
 # Output

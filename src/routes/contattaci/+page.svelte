@@ -1,118 +1,118 @@
 <script lang="ts">
-    import { Button } from "$lib/components/ui/button/index";
-    import { Label } from "$lib/components/ui/label/index";
-    import { contactEmail, requestOptions } from "$lib/config/contact";
+    import { Button } from "$lib/components/ui/button";
+    import { Input } from "$lib/components/ui/input";
+    import { Label } from "$lib/components/ui/label";
+    import { Textarea } from "$lib/components/ui/textarea";
+    import * as Select from "$lib/components/ui/select";
+    import { CONTACTS } from "$lib";
 
-    const inputClass =
-        "w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
+    const requestOptions = [
+        {
+            value: "nuovo-socio",
+            label: "Diventare tesserato",
+            subject: "Richiesta Nuova Iscrizione",
+        },
+        {
+            value: "team-building",
+            label: "Team Building",
+            subject: "Richiesta Team Building",
+        },
+        {
+            value: "formazione",
+            label: "Formazione",
+            subject: "Richiesta Formazione",
+        },
+        {
+            value: "scuole",
+            label: "Attività nelle scuole",
+            subject: "Richiesta Attività nelle scuole",
+        },
+        {
+            value: "camp-estivi",
+            label: "Camp estivi",
+            subject: "Richiesta Camp estivi",
+        },
+        {
+            value: "cartografia",
+            label: "Cartografia",
+            subject: "Richiesta Cartografia",
+        },
+        { value: "altro", label: "Altro", subject: "Richiesta Informazioni" },
+    ] as const;
 
-    let fullName = $state("");
-    let email = $state("");
-    let requestType = $state<(typeof requestOptions)[number]["value"]>(
-        requestOptions[0].value,
-    );
-    let message = $state("");
-    let isSubmitting = $state(false);
-    let submitMessage = $state("");
-    let submitError = $state("");
+    const resetStatus = () => ({
+        isSubmitting: false,
+        message: "",
+        error: "",
+    });
 
-    const selectedOption = $derived(
-        requestOptions.find((option) => option.value === requestType) ??
-            requestOptions[0],
-    );
+    const resetForm = () => ({
+        name: "",
+        email: "",
+        request: requestOptions[0]
+            .value as (typeof requestOptions)[number]["value"],
+        message: "",
+    });
 
-    const selectedSubject = $derived(selectedOption.subject);
-
-    const encodeFormData = (formData: FormData): string => {
-        const params = new URLSearchParams();
-
-        for (const [key, value] of formData.entries()) {
-            if (typeof value === "string" && key !== "requestType") {
-                params.append(key, value);
-            }
-        }
-
-        return params.toString();
-    };
+    let form = $state({ ...resetForm() });
+    let status = $state({ ...resetStatus() });
 
     const handleSubmit = async (event: SubmitEvent) => {
         event.preventDefault();
-
-        const formElement = event.currentTarget;
-        if (!(formElement instanceof HTMLFormElement)) {
-            return;
-        }
-
-        const formData = new FormData(formElement);
-
-        isSubmitting = true;
-        submitMessage = "";
-        submitError = "";
+        status = { ...resetStatus(), isSubmitting: true };
 
         try {
-            const response = await fetch("/contatti", {
+            const formElement = event.currentTarget as HTMLFormElement;
+            const formData = new FormData(formElement);
+            const response = await fetch("/contattaci", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
-                body: encodeFormData(formData),
+                body: new URLSearchParams(formData as any).toString(),
             });
 
-            if (!response.ok) {
-                throw new Error("Netlify submission failed");
-            }
+            if (!response.ok) throw new Error("Netlify submission failed");
 
-            submitMessage =
-                "Richiesta inviata con successo. Ti risponderemo al piu presto.";
+            status.message =
+                "Richiesta inviata con successo. Ti risponderemo al più presto.";
 
-            fullName = "";
-            email = "";
-            requestType = requestOptions[0].value;
-            message = "";
-            formElement.reset();
+            form = { ...resetForm() };
+            formElement.reset(); // Syncs any uncontrolled DOM inputs
         } catch {
-            submitError =
+            status.error =
                 "Invio non riuscito. Riprova tra poco o scrivici via email diretta.";
         } finally {
-            isSubmitting = false;
+            status.isSubmitting = false;
         }
     };
 </script>
-
-<svelte:head>
-    <title>Contattaci</title>
-    <meta
-        name="description"
-        content="Hai domande, idee o semplicemente vuoi fare due chiacchiere sull'orienteering? Contattaci tramite il modulo o via email. Siamo sempre felici di rispondere!"
-    />
-</svelte:head>
 
 <h1>Contattaci</h1>
 
 <p>Ogni richiesta è diversa, raccontaci cosa hai in mente :)</p>
 <p>
     Utilizza il modulo qui sotto per inviarci una richiesta o scrivici
-    direttamente all'indirizzo email <a
-        href={`mailto:${contactEmail}`}
-        class="hover:text-foreground transition-colors">{contactEmail}</a
-    >. Siamo sempre felici di rispondere a domande, discutere idee o
+    direttamente all'indirizzo email <a href={`mailto:${CONTACTS.EMAIL}`}>
+        {CONTACTS.EMAIL}
+    </a>. Siamo sempre felici di rispondere a domande, discutere idee o
     semplicemente fare due chiacchiere sull'orienteering!
 </p>
 
 <div class="not-prose mt-6 rounded-3xl border border-border p-5 sm:p-6">
-    {#if submitMessage}
+    {#if status.message}
         <p
             class="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300"
         >
-            {submitMessage}
+            {status.message}
         </p>
     {/if}
 
-    {#if submitError}
+    {#if status.error}
         <p
             class="mb-4 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
         >
-            {submitError}
+            {status.error}
         </p>
     {/if}
 
@@ -124,96 +124,89 @@
         netlify-honeypot="bot-field"
         onsubmit={handleSubmit}
     >
-        <input type="hidden" name="form-name" value="contact" />
-
-        <input
-            type="text"
-            name="bot-field"
-            tabindex="-1"
-            autocomplete="off"
-            class="hidden"
-            aria-hidden="true"
-        />
+        <Input type="hidden" name="form-name" value="contact" />
+        <Input type="text" name="bot-field" tabindex={-1} class="hidden" />
 
         <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-2">
                 <Label for="fullName">Nome</Label>
-                <input
+                <Input
                     id="fullName"
                     name="fullName"
                     type="text"
-                    bind:value={fullName}
-                    minlength="2"
+                    bind:value={form.name}
+                    minlength={2}
                     required
-                    class={inputClass}
                     placeholder="Il tuo nome"
                 />
             </div>
 
             <div class="space-y-2">
                 <Label for="email">Email</Label>
-                <input
+                <Input
                     id="email"
                     name="email"
                     type="email"
-                    bind:value={email}
+                    bind:value={form.email}
                     required
-                    class={inputClass}
                     placeholder="nome@azienda.it"
                 />
             </div>
         </div>
 
         <div class="space-y-2">
-            <Label for="requestType">Tipo richiesta</Label>
-            <select
-                id="requestType"
-                name="requestType"
-                bind:value={requestType}
-                class={inputClass}
-            >
-                {#each requestOptions as option}
-                    <option value={option.value}>{option.label}</option>
-                {/each}
-            </select>
+            <Label for="request">Tipo richiesta</Label>
+            <Select.Root type="single" name="request" bind:value={form.request}>
+                <Select.Trigger id="request" class="w-full">
+                    {requestOptions.find((opt) => opt.value === form.request)
+                        ?.label ?? requestOptions[0].label}
+                </Select.Trigger>
+                <Select.Content>
+                    <Select.Group>
+                        <Select.Label>Tipo richiesta</Select.Label>
+                        {#each requestOptions as option (option.value)}
+                            <Select.Item
+                                value={option.value}
+                                label={option.label}
+                            >
+                                {option.label}
+                            </Select.Item>
+                        {/each}
+                    </Select.Group>
+                </Select.Content>
+            </Select.Root>
         </div>
 
-        <div class="hidden" aria-hidden="true">
-            <Label for="subject" class="hidden" aria-hidden="true">
-                Oggetto
-            </Label>
-            <input
-                id="subject"
-                class="hidden"
-                aria-hidden="true"
+        <div class="hidden">
+            <Label for="subject">Oggetto</Label>
+            <Input
+                type="hidden"
                 name="subject"
-                value={selectedSubject}
+                value={requestOptions.find((opt) => opt.value === form.request)
+                    ?.subject ?? "Richiesta sconosciuta"}
             />
         </div>
 
         <div class="space-y-2">
             <Label for="message">Messaggio</Label>
-            <textarea
+            <Textarea
                 id="message"
                 name="message"
-                bind:value={message}
-                minlength="10"
+                bind:value={form.message}
+                minlength={10}
                 required
-                rows="6"
-                class={inputClass}
+                class="min-h-36"
                 placeholder="Descrivi la tua richiesta..."
-            ></textarea>
+            />
         </div>
 
-        <div class="flex flex-wrap items-center gap-3">
-            <Button
-                type="submit"
-                size="lg"
-                disabled={isSubmitting}
-                class="w-full cursor-pointer bg-black"
-            >
-                {isSubmitting ? "Invio in corso..." : "Invia richiesta"}
-            </Button>
-        </div>
+        <Button
+            type="submit"
+            size="lg"
+            disabled={status.isSubmitting}
+            class="w-full cursor-pointer bg-black"
+        >
+            {status.isSubmitting ? "Invio in corso..." : "Invia richiesta"}
+        </Button>
     </form>
 </div>

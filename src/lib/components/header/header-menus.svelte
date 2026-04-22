@@ -50,6 +50,11 @@
             ],
         },
         {
+            label: "Mappe",
+            href: "/mappe",
+            links: [],
+        },
+        {
             label: "Contattaci",
             href: "/contattaci",
             links: [],
@@ -91,7 +96,7 @@
                         >
                     </NavigationMenu.Trigger>
                     <NavigationMenu.Content>
-                        <ul class="grid w-40 gap-4 p-2">
+                        <ul class="grid w-50 gap-4 p-2">
                             {#each section.links as link (link.anchor)}
                                 <li>
                                     <NavigationMenu.Link

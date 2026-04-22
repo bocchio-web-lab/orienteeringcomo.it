@@ -1,6 +1,6 @@
 <script lang="ts">
     import * as Card from "$lib/components/ui/card/index";
-    import type { Event } from "$lib/data/events";
+    import type { Event } from "$lib/types";
 
     let {
         event,

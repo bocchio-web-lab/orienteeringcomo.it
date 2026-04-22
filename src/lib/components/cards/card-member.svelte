@@ -1,6 +1,6 @@
 <script lang="ts">
     import * as Card from "$lib/components/ui/card/index";
-    import type { Member } from "$lib/data/members";
+    import type { Member } from "$lib/types";
 
     let {
         member,

@@ -1,15 +1,12 @@
 <script lang="ts">
+    import type { PageData } from "./$types";
     import CardEvent from "$lib/components/cards/card-event.svelte";
-    import { getEventGroups } from "$lib/data/events";
 
-    const { futureEvents, pastEvents } =
-        getEventGroups();
+    let { data }: { data: PageData } = $props();
+
+    const futureEvents = $derived(data.eventGroups.futureEvents);
+    const pastEvents = $derived(data.eventGroups.pastEvents);
 </script>
-
-<svelte:head>
-  <title>Gare</title>
-  <meta name="description" content="Scopri tutte le gare di orienteering che abbiamo organizzato o che abbiamo in programma di organizzare. Unisciti a noi per vivere l'emozione della competizione e condividere la passione per questo sport!" />
-</svelte:head>
 
 # Gare
 
@@ -18,26 +15,36 @@ Da notare che questo elenco non include le attività fatte su richiesta, quali t
 
 ## In arrivo
 
-{#if futureEvents.length > 0}
+{#if data.dbError}
+    <p class="not-prose mt-4 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        Errore: dati eventi non disponibili al momento.
+    </p>
+{:else if futureEvents.length == 0}
+    <p>
+        Non ci sono gare in programma al momento. Rimanete sintonizzati per aggiornamenti futuri!
+    </p>
+{:else}
     <div class="not-prose mt-6 grid gap-4">
         {#each futureEvents as event}
             <CardEvent {event} />
         {/each}
     </div>
-{:else}
-    <p>
-        Non ci sono gare in programma al momento. Rimanete sintonizzati per aggiornamenti futuri!
-    </p>
 {/if}
 
 ## Passate
 
-{#if pastEvents.length > 0}
+{#if data.dbError}
+    <p class="not-prose mt-4 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        Errore: dati eventi non disponibili al momento.
+    </p>
+{:else if pastEvents.length == 0}
+    <p>
+        Non ci sono gare passate al momento.
+    </p>
+{:else}
     <div class="not-prose mt-6 grid gap-4">
         {#each pastEvents as event}
             <CardEvent {event} />
         {/each}
     </div>
-{:else}
-    <p>Non ci sono gare passate al momento.</p>
 {/if}

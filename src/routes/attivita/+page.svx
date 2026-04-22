@@ -1,8 +1,3 @@
-<svelte:head>
-  <title>Attività</title>
-  <meta name="description" content="Scopri tutte le attività che offriamo per promuovere l'orienteering sul territorio comasco. Dalle gare agli eventi, dai team building alla formazione, fino alle attività nelle scuole e ai camp estivi. Contattaci per saperne di più!" />
-</svelte:head>
-
 # Attività
 
 Il nostro obiettivo principale è, da sempre, quello di **promuovere e organizzare gare ed eventi di orienteering**.

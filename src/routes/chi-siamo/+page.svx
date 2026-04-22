@@ -1,12 +1,9 @@
 <script lang="ts">
+    import type { PageData } from "./$types";
     import CardMember from "$lib/components/cards/card-member.svelte";
-    import { members } from "$lib/data/members";
-</script>
 
-<svelte:head>
-  <title>Chi siamo</title>
-  <meta name="description" content="Scopri chi siamo, la nostra storia e i nostri tesserati. Siamo una società sportiva che promuove l'orienteering sul territorio comasco dal 1992, con una missione di diffusione della passione per questo sport." />
-</svelte:head>
+    let { data }: { data: PageData } = $props();
+</script>
 
 # Chi siamo
 
@@ -21,22 +18,32 @@ Nel tempo siamo cresciuti, mantenendo la stessa filosofia: **un ambiente accogli
 Oggi contiamo circa 50 tra tesserati e simpatizzanti, attivi in gare, allenamenti e iniziative sociali.
 Siamo una realtà **inclusiva**, dove ognuno può trovare il proprio spazio e contribuire alla crescita della comunità.
 
-![Foto di gruppo dei tesserati durante un evento sociale]()
+![Foto di gruppo dei tesserati durante un evento sociale](https://orienteeringcomo.it/wp/wp-content/uploads/2018/10/20181020-sq-junior-caltena9-768x432.jpg)
 
 ## Tesserati
 
 Alcuni dei nostri tesserati rappresentano la varietà e la passione che caratterizzano la società, contribuendo con le loro esperienze alla crescita del gruppo.
 
-<div class="not-prose mt-6 grid gap-4">
-    {#each members as member, i}
-        <CardMember
-            member={{
-                name: member.name,
-                role: member.role,
-                bio: member.bio,
-                image: member.image,
-            }}
-            reverse={i % 2 === 1}
-        />
-    {/each}
-</div>
+{#if data.dbError}
+    <p class="not-prose mt-4 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        Errore: dati tesserati non disponibili al momento.
+    </p>
+{:else if data.members.length == 0}
+    <p>
+        Non ci sono tesserati al momento.
+    </p>
+{:else}
+    <div class="not-prose mt-6 grid gap-4">
+        {#each data.members as member, i}
+            <CardMember
+                member={{
+                    name: member.name,
+                    role: member.role,
+                    bio: member.bio,
+                    image: member.image,
+                }}
+                reverse={i % 2 === 1}
+            />
+        {/each}
+    </div>
+{/if}
