@@ -6,38 +6,32 @@
     import * as Select from "$lib/components/ui/select";
     import { CONTACTS } from "$lib";
 
-    const requestOptions = [
+    const subjects = [
         {
             value: "nuovo-socio",
             label: "Diventare tesserato",
-            subject: "Richiesta Nuova Iscrizione",
         },
         {
             value: "team-building",
             label: "Team Building",
-            subject: "Richiesta Team Building",
         },
         {
             value: "formazione",
             label: "Formazione",
-            subject: "Richiesta Formazione",
         },
         {
             value: "scuole",
             label: "Attività nelle scuole",
-            subject: "Richiesta Attività nelle scuole",
         },
         {
             value: "camp-estivi",
             label: "Camp estivi",
-            subject: "Richiesta Camp estivi",
         },
         {
             value: "cartografia",
             label: "Cartografia",
-            subject: "Richiesta Cartografia",
         },
-        { value: "altro", label: "Altro", subject: "Richiesta Informazioni" },
+        { value: "altro", label: "Altro" },
     ] as const;
 
     const resetStatus = () => ({
@@ -49,8 +43,7 @@
     const resetForm = () => ({
         name: "",
         email: "",
-        request: requestOptions[0]
-            .value as (typeof requestOptions)[number]["value"],
+        request: subjects[0].value as (typeof subjects)[number]["value"],
         message: "",
     });
 
@@ -64,6 +57,15 @@
         try {
             const formElement = event.currentTarget as HTMLFormElement;
             const formData = new FormData(formElement);
+            formData.set(
+                "subject",
+                form.request === "altro"
+                    ? "Richiesta Informazioni"
+                    : "Richiesta " +
+                          (subjects.find((opt) => opt.value === form.request)
+                              ?.label ?? "Sconosciuta"),
+            );
+
             const response = await fetch("/contattaci", {
                 method: "POST",
                 headers: {
@@ -129,10 +131,9 @@
 
         <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-2">
-                <Label for="fullName">Nome</Label>
+                <Label for="name">Nome</Label>
                 <Input
-                    id="fullName"
-                    name="fullName"
+                    name="name"
                     type="text"
                     bind:value={form.name}
                     minlength={2}
@@ -144,27 +145,26 @@
             <div class="space-y-2">
                 <Label for="email">Email</Label>
                 <Input
-                    id="email"
                     name="email"
                     type="email"
                     bind:value={form.email}
                     required
-                    placeholder="nome@azienda.it"
+                    placeholder="esempio@dominio.it"
                 />
             </div>
         </div>
 
         <div class="space-y-2">
-            <Label for="request">Tipo richiesta</Label>
-            <Select.Root type="single" name="request" bind:value={form.request}>
-                <Select.Trigger id="request" class="w-full">
-                    {requestOptions.find((opt) => opt.value === form.request)
-                        ?.label ?? requestOptions[0].label}
+            <Label for="subject">Tipo richiesta</Label>
+            <Select.Root type="single" name="subject" bind:value={form.request}>
+                <Select.Trigger class="w-full">
+                    {subjects.find((opt) => opt.value === form.request)
+                        ?.label ?? subjects[0].label}
                 </Select.Trigger>
                 <Select.Content>
                     <Select.Group>
                         <Select.Label>Tipo richiesta</Select.Label>
-                        {#each requestOptions as option (option.value)}
+                        {#each subjects as option (option.value)}
                             <Select.Item
                                 value={option.value}
                                 label={option.label}
@@ -177,20 +177,9 @@
             </Select.Root>
         </div>
 
-        <div class="hidden">
-            <Label for="subject">Oggetto</Label>
-            <Input
-                type="hidden"
-                name="subject"
-                value={requestOptions.find((opt) => opt.value === form.request)
-                    ?.subject ?? "Richiesta sconosciuta"}
-            />
-        </div>
-
         <div class="space-y-2">
             <Label for="message">Messaggio</Label>
             <Textarea
-                id="message"
                 name="message"
                 bind:value={form.message}
                 minlength={10}

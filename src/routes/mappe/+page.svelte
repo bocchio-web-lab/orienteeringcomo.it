@@ -1,9 +1,10 @@
 <script lang="ts">
     import "leaflet/dist/leaflet.css";
     import { onMount } from "svelte";
-    import CardMap from "$lib/components/cards/card-map.svelte";
     import { Input } from "$lib/components/ui/input";
+    import { Button } from "$lib/components/ui/button";
     import * as Select from "$lib/components/ui/select";
+    import CardMap from "$lib/components/cards/card-map.svelte";
     import OriComoLogo from "$lib/assets/oricomo-below.svg";
     import type { Map as TeamMap } from "$lib/types";
     import type { PageProps } from "./$types";
@@ -11,7 +12,7 @@
     let { data }: PageProps = $props();
 
     let searchQuery = $state("");
-    let typeFilter = $state<"all" | TeamMap["type"]>("all");
+    let typeFilter = $state<TeamMap["type"] | undefined>(undefined);
     let mapElement = $state<HTMLDivElement>();
     let L: typeof import("leaflet") | undefined;
     let leafletMap: import("leaflet").Map | undefined;
@@ -19,7 +20,6 @@
     let defaultIcon: import("leaflet").DivIcon | undefined;
 
     const typeOptions = [
-        { value: "all", label: "Tutti" },
         { value: "CO", label: "CO" },
         { value: "CS/T", label: "CS/T" },
         { value: "MTBO", label: "MTBO" },
@@ -29,8 +29,7 @@
     const filteredMaps = $derived.by(() =>
         data.maps.filter((mapItem) => {
             const normalizedQuery = searchQuery.trim().toLowerCase();
-            const matchesType =
-                typeFilter === "all" || mapItem.type === typeFilter;
+            const matchesType = !typeFilter || mapItem.type === typeFilter;
             const matchesText =
                 normalizedQuery.length === 0 ||
                 mapItem.name.toLowerCase().includes(normalizedQuery) ||
@@ -58,7 +57,7 @@
                     <strong>${mapItem.name}</strong><br>
                     <small class="text-muted-foreground">Scala 1:${mapItem.scale} &middot; Equidistanza ${mapItem.contours}m</small><br>
                     <button
-                        class="mt-2 rounded px-3 py-1 text-sm bg-primary text-primary-foreground cursor-pointer hover:bg-primary/80"
+                        class="mt-2 rounded-full px-3 py-1 text-sm bg-primary text-primary-foreground cursor-pointer hover:bg-primary/80"
                         onclick="{
                             document.getElementById('search').value = '${mapItem.name}';
                             document.getElementById('search').dispatchEvent(new Event('input'));
@@ -166,37 +165,56 @@
 
 <div
     id="filters"
-    class="my-4 space-y-4 grid gap-2 items-start scroll-mt-33 md:grid-cols-[2fr_1fr] md:scroll-mt-22"
+    class="mt-4 mb-6 space-y-4 grid gap-2 items-start scroll-mt-33 md:scroll-mt-22"
 >
-    <div class="space-y-2">
-        <Input
-            id="search"
-            type="search"
-            placeholder="Cerca per nome o località..."
-            bind:value={searchQuery}
-        />
+    <div class="grid gap-2 mb-0 md:grid-cols-[2fr_1fr]">
+        <div class="space-y-2">
+            <Input
+                id="search"
+                type="search"
+                placeholder="Cerca per nome o località..."
+                bind:value={searchQuery}
+            />
+        </div>
+        <div class="space-y-2">
+            <Select.Root
+                type="single"
+                name="mapTypeFilter"
+                bind:value={typeFilter}
+            >
+                <Select.Trigger class="w-full mb-0">
+                    {typeOptions.find((option) => option.value === typeFilter)
+                        ?.label ?? "Seleziona tipo mappa"}
+                </Select.Trigger>
+                <Select.Content>
+                    <Select.Group>
+                        <Select.Label>Tipo mappa</Select.Label>
+                        {#each typeOptions as option (option.value)}
+                            <Select.Item
+                                value={option.value}
+                                label={option.label}
+                            >
+                                {option.label}
+                            </Select.Item>
+                        {/each}
+                    </Select.Group>
+                </Select.Content>
+            </Select.Root>
+        </div>
     </div>
-    <div class="space-y-2">
-        <Select.Root type="single" name="mapTypeFilter" bind:value={typeFilter}>
-            <Select.Trigger class="w-full mb-0">
-                {typeOptions.find((option) => option.value === typeFilter)
-                    ?.label ?? "Tutti"}
-            </Select.Trigger>
-            <Select.Content>
-                <Select.Group>
-                    <Select.Label>Tipo mappa</Select.Label>
-                    {#each typeOptions as option (option.value)}
-                        <Select.Item value={option.value} label={option.label}>
-                            {option.label}
-                        </Select.Item>
-                    {/each}
-                </Select.Group>
-            </Select.Content>
-        </Select.Root>
-    </div>
+    <Button
+        variant="default"
+        class="w-full cursor-pointer"
+        onclick={() => {
+            searchQuery = "";
+            typeFilter = undefined;
+        }}
+    >
+        Reset
+    </Button>
 </div>
 
-<div class="grid gap-4 not-prose">
+<div class="grid gap-4 not-prose grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
     {#if filteredMaps.length > 0}
         {#each filteredMaps as mapItem}
             <CardMap map={mapItem} />
