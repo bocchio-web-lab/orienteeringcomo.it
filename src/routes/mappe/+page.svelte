@@ -59,9 +59,13 @@
                     <button
                         class="mt-2 rounded-full px-3 py-1 text-sm bg-primary text-primary-foreground cursor-pointer hover:bg-primary/80"
                         onclick="{
-                            document.getElementById('search').value = '${mapItem.name}';
-                            document.getElementById('search').dispatchEvent(new Event('input'));
-                            document.getElementById('filters').scrollIntoView({ behavior: 'smooth' });
+							const target = document.getElementById('map_ID_${mapItem.id}');
+							if (!target) return;
+							const rect = target.getBoundingClientRect();
+							const targetTop = rect.top + window.scrollY - ((window.innerHeight - rect.height) / 2);
+							const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+							window.scrollTo({ top: Math.max(0, targetTop), behavior: reducedMotion ? 'auto' : 'smooth' });
+							target.focus({ preventScroll: true });
                         }">
                         Vai alla mappa
                     </button>
@@ -173,6 +177,7 @@
 				id="search"
 				type="search"
 				placeholder="Cerca per nome o località..."
+				aria-label="Cerca mappe per nome o località"
 				bind:value={searchQuery}
 			/>
 		</div>
@@ -182,7 +187,10 @@
 				name="mapTypeFilter"
 				bind:value={typeFilter}
 			>
-				<Select.Trigger class="mb-0 w-full">
+				<Select.Trigger
+					class="mb-0 w-full text-base md:text-sm"
+					aria-label="Seleziona tipo mappa"
+				>
 					{typeOptions.find((option) => option.value === typeFilter)
 						?.label ?? "Seleziona tipo mappa"}
 				</Select.Trigger>
@@ -193,6 +201,7 @@
 							<Select.Item
 								value={option.value}
 								label={option.label}
+								aria-label={option.label}
 							>
 								{option.label}
 							</Select.Item>
@@ -217,7 +226,7 @@
 {#if filteredMaps.length > 0}
 	<div class="not-prose grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
 		{#each filteredMaps as mapItem}
-			<CardMap map={mapItem} />
+			<CardMap id={`map_ID_${mapItem.id}`} map={mapItem} />
 		{/each}
 	</div>
 {:else}

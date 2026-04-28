@@ -3,7 +3,7 @@
 	import * as Card from "$lib/components/ui/card";
 	import type { Map } from "$lib/types";
 
-	let { map }: { map: Map } = $props();
+	let { id, map }: { id: string; map: Map } = $props();
 	let container = $state<HTMLDivElement>();
 
 	let view = $state({
@@ -167,7 +167,8 @@
 </script>
 
 <Card.Root
-	class={`flex h-full flex-col gap-4 overflow-hidden p-4 transition-transform duration-300 ease-out hover:scale-[1.02] hover:shadow-md ${map.image ? "cursor-pointer" : "cursor-default"}`}
+	{id}
+	class={`focus:ring-secondary-foreground flex h-full flex-col gap-4 overflow-hidden p-4 transition-transform duration-300 ease-out hover:scale-[1.02] hover:shadow-md focus:ring-2 ${map.image ? "cursor-pointer" : "cursor-default"}`}
 	role="button"
 	tabindex={0}
 	aria-label={`Apri la mappa ${map.name} a schermo intero`}
@@ -274,7 +275,7 @@
 				})}
 			</span>
 			<span class="shrink-0 rounded-full border px-2.5 py-1">
-				{map.contours}m
+				{map.contours ?? "?"}m
 			</span>
 			<span
 				class={`shrink-0 rounded-full border px-2.5 py-1 ${eventTypeClasses[map.type]}`}
